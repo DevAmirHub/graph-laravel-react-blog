@@ -12,3 +12,16 @@ export const GET_CATEGORIES = gql`
         }
     }
 `;
+
+export const GET_CATEGORY_BY_ID = gql`
+    query GetCategoryById($id: ID!) {
+        category(id: $id) {
+            id
+            name
+            slug
+            description
+            created_at
+            updated_at
+        }
+    }
+`;
