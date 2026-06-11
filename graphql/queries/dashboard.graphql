@@ -1,0 +1,16 @@
+extend type Query {
+    "Total registered users."
+    usersCount: Int! @count(model: "User") @guard
+
+    "Total blog posts."
+    postsCount: Int! @count(model: "Post") @guard
+
+    "Total categories."
+    categoriesCount: Int! @count(model: "Category") @guard
+
+    "Total tags."
+    tagsCount: Int! @count(model: "Tag") @guard
+
+    "Total comments."
+    commentsCount: Int! @count(model: "Comment") @guard
+}

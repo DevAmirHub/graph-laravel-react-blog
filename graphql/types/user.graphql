@@ -2,6 +2,10 @@ type User {
     id: ID!
     name: String!
     email: String!
+    postsCount: Int! @count(relation: "posts")
+    commentsCount: Int! @count(relation: "comments")
     posts: [Post!]! @hasMany
     comments: [Comment!]! @hasMany
+    created_at: DateTime!
+    updated_at: DateTime!
 }

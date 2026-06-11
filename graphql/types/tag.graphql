@@ -2,6 +2,7 @@ type Tag {
     id: ID!
     name: String!
     slug: String!
+    postsCount: Int! @count(relation: "posts")
     posts: [Post!]! @belongsToMany
     created_at: DateTime!
     updated_at: DateTime!
