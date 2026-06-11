@@ -3,7 +3,7 @@ extend type Query {
     posts(
         title: String @where(operator: "like")
         status: String @eq
-    ): [Post!]! @paginate(defaultCount: 10)
+    ): [Post!]! @paginate(defaultCount: 10) @orderBy(column: "created_at", direction: DESC)
 
     "Find a single post by ID."
     post(id: ID! @eq): Post @find
