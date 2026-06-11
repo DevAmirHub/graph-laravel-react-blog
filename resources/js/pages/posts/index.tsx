@@ -48,7 +48,7 @@ export default function PostsIndex() {
                 <div className="flex items-center justify-between gap-4">
                     <Heading
                         title="Posts"
-                        description="Browse and manage blog posts."
+                        description="Manage blog posts from the admin panel."
                     />
                     <Button asChild>
                         <Link href={createPost()}>Create post</Link>
