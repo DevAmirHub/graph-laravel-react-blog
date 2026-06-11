@@ -1,12 +1,20 @@
 import { Head, router } from '@inertiajs/react';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { toast } from 'sonner';
 import Heading from '@/components/heading';
 import { PostForm } from '@/components/posts/post-form';
 import { CREATE_POST } from '@/graphql/posts/mutations';
+import { GET_POSTS } from '@/graphql/posts/queries';
 import { GET_CATEGORIES } from '@/graphql/categories/queries';
 import { GET_TAGS } from '@/graphql/tags/queries';
 import { uploadCoverImage } from '@/hooks/use-cover-upload';
 import { usePostForm } from '@/hooks/use-post-form';
+import { getGraphQLErrorMessage } from '@/lib/graphql-errors';
+import { apolloClient } from '@/lib/apollo';
+import {
+    slugify,
+    validatePostForm,
+} from '@/lib/post-form-validation';
 import { create as createPostRoute, index as postsIndex } from '@/routes/posts';
 import type { Category } from '@/types/category';
 import type { Tag } from '@/types/tag';
@@ -19,8 +27,12 @@ type TagsQueryResult = {
     tags: Tag[];
 };
 
+function getErrorMessage(error: unknown): string {
+    return getGraphQLErrorMessage(error);
+}
+
 export default function CreatePost() {
-    const { values, setField } = usePostForm();
+    const { values, setField, reset } = usePostForm();
     const { data: categoriesData } = useQuery<CategoriesQueryResult>(
         GET_CATEGORIES,
     );
@@ -28,18 +40,42 @@ export default function CreatePost() {
     const [createPost, { loading }] = useMutation(CREATE_POST);
 
     const handleSubmit = async () => {
-        await createPost({
-            variables: {
-                ...values,
-                excerpt: values.excerpt || undefined,
-                cover_image: values.cover_image || undefined,
-                tags: values.tag_ids.length
-                    ? { connect: values.tag_ids }
-                    : undefined,
-            },
-        });
+        const payload = {
+            title: values.title.trim(),
+            slug: slugify(values.slug),
+            content: values.content.trim(),
+            excerpt: values.excerpt.trim(),
+            category_id: values.category_id,
+        };
 
-        router.visit(postsIndex().url);
+        const validationError = validatePostForm(payload);
+
+        if (validationError) {
+            toast.error(validationError);
+            return;
+        }
+
+        try {
+            await createPost({
+                variables: {
+                    ...payload,
+                    excerpt: payload.excerpt || undefined,
+                    cover_image: values.cover_image || undefined,
+                    status: values.status,
+                    tags: values.tag_ids.length
+                        ? { connect: values.tag_ids }
+                        : undefined,
+                },
+            });
+
+            await apolloClient.refetchQueries({ include: [GET_POSTS] });
+
+            toast.success('Post created successfully.');
+            reset();
+            router.visit(postsIndex().url);
+        } catch (error) {
+            toast.error(getErrorMessage(error));
+        }
     };
 
     return (
