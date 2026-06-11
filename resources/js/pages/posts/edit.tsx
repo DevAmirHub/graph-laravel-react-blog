@@ -41,6 +41,7 @@ export default function EditPost() {
     const { values, setField, setValues } = usePostForm();
     const { data, loading, error } = useQuery<PostQueryResult>(GET_POST_BY_ID, {
         variables: { id: postId },
+        skip: !postId,
     });
     const { data: categoriesData } = useQuery<CategoriesQueryResult>(
         GET_CATEGORIES,
