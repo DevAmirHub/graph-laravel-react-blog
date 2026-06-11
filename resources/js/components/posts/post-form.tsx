@@ -56,8 +56,12 @@ export function PostForm({
                         onChange={(event) =>
                             onChange('title', event.target.value)
                         }
+                        minLength={5}
                         required
                     />
+                    <p className="text-xs text-muted-foreground">
+                        Minimum 5 characters.
+                    </p>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="slug">Slug</Label>
@@ -67,8 +71,12 @@ export function PostForm({
                         onChange={(event) =>
                             onChange('slug', event.target.value)
                         }
+                        minLength={3}
                         required
                     />
+                    <p className="text-xs text-muted-foreground">
+                        Use letters, numbers, and hyphens only.
+                    </p>
                 </div>
             </div>
 
@@ -92,8 +100,12 @@ export function PostForm({
                         onChange('content', event.target.value)
                     }
                     className="min-h-40 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    minLength={20}
                     required
                 />
+                <p className="text-xs text-muted-foreground">
+                    Minimum 20 characters ({values.content.trim().length}/20).
+                </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
