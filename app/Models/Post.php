@@ -2,11 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[Fillable([
+    'user_id',
+    'category_id',
+    'title',
+    'slug',
+    'excerpt',
+    'content',
+    'cover_image',
+    'status',
+    'views',
+])]
 class Post extends Model
 {
     public function user() : BelongsTo
