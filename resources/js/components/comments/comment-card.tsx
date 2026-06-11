@@ -16,7 +16,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { edit as editComment } from '@/routes/comments';
-import { show as showPost } from '@/routes/posts';
+import { show as showBlogPost } from '@/routes/blog';
 import type { Comment, CommentStatus } from '@/types/comment';
 
 type CommentCardProps = {
@@ -50,7 +50,7 @@ export function CommentCard({
                         {comment.post && (
                             <CardTitle className="text-base">
                                 <Link
-                                    href={showPost({ post: comment.post.slug })}
+                                    href={showBlogPost({ post: comment.post.slug })}
                                     className="hover:underline"
                                 >
                                     {comment.post.title}
