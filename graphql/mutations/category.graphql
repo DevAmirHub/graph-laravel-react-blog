@@ -1,0 +1,18 @@
+extend type Mutation {
+    createCategory(
+        name: String! @rules(apply: ["required", "string", "min:2", "max:255"])
+        slug: String! @rules(apply: ["required", "string", "unique:categories,slug"])
+        description: String
+    ): Category! @guard @create
+
+    updateCategory(
+        id: ID! @whereKey @rules(apply: ["exists:categories,id"])
+        name: String @rules(apply: ["string", "min:2", "max:255"])
+        slug: String @rules(apply: ["unique:categories,slug,{id}"])
+        description: String
+    ): Category! @guard @update
+
+    deleteCategory(
+        id: ID! @whereKey @rules(apply: ["exists:categories,id"])
+    ): Category @guard @delete
+}
