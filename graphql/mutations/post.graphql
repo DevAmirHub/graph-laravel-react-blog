@@ -2,19 +2,27 @@ extend type Mutation {
     createPost(
         title: String! @rules(apply: ["required", "string", "min:5", "max:255"])
         slug: String! @rules(apply: ["required", "string", "unique:posts,slug"])
+        excerpt: String
         content: String! @rules(apply: ["required", "string", "min:20"])
-        status: String! @rules(apply: ["required", "in:draft,published"])
-        category_id: ID
-    ): Post! @create
+        cover_image: String
+        status: String! @rules(apply: ["required", "in:draft,published,archived"])
+        category_id: ID! @rules(apply: ["required", "exists:categories,id"])
+        tags: PostTagsRelation @create
+    ): Post! @guard @create @inject(context: "user.id", name: "user_id")
 
     updatePost(
-        id: ID! @whereKey
-        title: String
-        slug: String
-        content: String
+        id: ID! @whereKey @rules(apply: ["exists:posts,id"])
+        title: String @rules(apply: ["string", "min:5", "max:255"])
+        slug: String @rules(apply: ["unique:posts,slug,{id}"])
+        excerpt: String
+        content: String @rules(apply: ["string", "min:20"])
+        cover_image: String
         status: String @rules(apply: ["in:draft,published,archived"])
-        category_id: ID
-    ): Post! @update
+        category_id: ID @rules(apply: ["exists:categories,id"])
+        tags: PostTagsRelation @update
+    ): Post! @guard @update
 
-    deletePost(id: ID! @whereKey): Post @delete
+    deletePost(
+        id: ID! @whereKey @rules(apply: ["exists:posts,id"])
+    ): Post @guard @delete
 }
