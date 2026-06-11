@@ -350,6 +350,50 @@ mutation {
 }
 Phase 9: React Pages 
 
+resources/js/
+├── pages/                          ← فقط entry point صفحات Inertia
+│   ├── welcome.tsx
+│   ├── dashboard.tsx
+│   ├── posts/
+│   │   ├── index.tsx               # لیست پست‌ها        /posts
+│   │   ├── create.tsx              # ساخت پست           /posts/create
+│   │   ├── edit.tsx                # ویرایش             /posts/{id}/edit
+│   │   └── show.tsx                # تک پست             /posts/{slug}
+│   ├── categories/
+│   │   └── index.tsx               # /categories
+│   └── tags/
+│       └── index.tsx               # /tags
+│
+├── components/                     ← UI قابل استفاده مجدد
+│   ├── posts/
+│   │   ├── post-card.tsx
+│   │   ├── post-form.tsx
+│   │   ├── post-filters.tsx
+│   │   └── post-status-badge.tsx
+│   ├── categories/
+│   │   └── category-select.tsx
+│   └── tags/
+│       └── tag-input.tsx
+│
+├── graphql/                        ← Apollo queries/mutations
+│   ├── posts/
+│   │   ├── queries.ts
+│   │   ├── mutations.ts
+│   │   └── fragments.ts
+│   ├── categories/
+│   │   └── queries.ts
+│   └── comments/
+│       └── mutations.ts
+│
+├── hooks/                          ← logic مشترک React
+│   ├── use-post-form.ts
+│   └── use-cover-upload.ts         # REST upload
+│
+└── types/
+    ├── post.ts
+    ├── category.ts
+    └── tag.ts
+
 Create these pages:
 
 Home
