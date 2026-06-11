@@ -1,0 +1,18 @@
+extend type Mutation {
+    createUser(
+        name: String! @rules(apply: ["required", "string", "min:2", "max:255"])
+        email: String! @rules(apply: ["required", "email", "unique:users,email"])
+        password: String! @rules(apply: ["required", "string", "min:8"])
+    ): User! @guard @create
+
+    updateUser(
+        id: ID! @whereKey @rules(apply: ["exists:users,id"])
+        name: String @rules(apply: ["string", "min:2", "max:255"])
+        email: String
+        password: String @rules(apply: ["string", "min:8"])
+    ): User! @guard @update @validator
+
+    deleteUser(
+        id: ID! @whereKey @rules(apply: ["exists:users,id"])
+    ): User @guard @delete
+}
