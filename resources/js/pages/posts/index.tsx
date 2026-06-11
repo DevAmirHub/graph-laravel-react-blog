@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { useQuery } from '@apollo/client/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Heading from '@/components/heading';
 import { PostCard } from '@/components/posts/post-card';
 import { PostFilters } from '@/components/posts/post-filters';
@@ -17,22 +17,29 @@ type PostsQueryResult = {
 export default function PostsIndex() {
     const [title, setTitle] = useState('');
     const [status, setStatus] = useState<PostStatus | 'all'>('all');
+    const [page, setPage] = useState(1);
+
+    useEffect(() => {
+        setPage(1);
+    }, [title, status]);
 
     const variables = useMemo(
         () => ({
-            title: title || undefined,
+            title: title.trim() ? `%${title.trim()}%` : undefined,
             status: status === 'all' ? undefined : status,
             first: 10,
-            page: 1,
+            page,
         }),
-        [title, status],
+        [title, status, page],
     );
 
     const { data, loading, error } = useQuery<PostsQueryResult>(GET_POSTS, {
         variables,
+        notifyOnNetworkStatusChange: true,
     });
 
     const posts = data?.posts.data ?? [];
+    const paginatorInfo = data?.posts.paginatorInfo;
 
     return (
         <>
@@ -55,7 +62,7 @@ export default function PostsIndex() {
                     onStatusChange={setStatus}
                 />
 
-                {loading && (
+                {loading && posts.length === 0 && (
                     <div className="flex justify-center py-10">
                         <Spinner className="size-6" />
                     </div>
@@ -65,11 +72,41 @@ export default function PostsIndex() {
                     <p className="text-sm text-destructive">{error.message}</p>
                 )}
 
+                {!loading && posts.length === 0 && !error && (
+                    <p className="text-sm text-muted-foreground">
+                        No posts found.
+                    </p>
+                )}
+
                 <div className="grid gap-4">
                     {posts.map((post: Post) => (
                         <PostCard key={post.id} post={post} />
                     ))}
                 </div>
+
+                {paginatorInfo && paginatorInfo.lastPage > 1 && (
+                    <div className="flex items-center justify-between gap-4">
+                        <Button
+                            variant="outline"
+                            disabled={page <= 1}
+                            onClick={() => setPage((current) => current - 1)}
+                        >
+                            Previous
+                        </Button>
+                        <p className="text-sm text-muted-foreground">
+                            Page {paginatorInfo.currentPage} of{' '}
+                            {paginatorInfo.lastPage} ({paginatorInfo.total}{' '}
+                            posts)
+                        </p>
+                        <Button
+                            variant="outline"
+                            disabled={page >= paginatorInfo.lastPage}
+                            onClick={() => setPage((current) => current + 1)}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                )}
             </div>
         </>
     );
