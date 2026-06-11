@@ -8,6 +8,7 @@ import {
     Users,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { DashboardCharts } from '@/components/dashboard/dashboard-charts';
 import { DashboardTable } from '@/components/dashboard/dashboard-table';
 import { QueryPerformanceBar } from '@/components/dashboard/query-performance-bar';
 import { StatCard } from '@/components/dashboard/stat-card';
@@ -84,7 +85,7 @@ export default function Dashboard() {
             <div className="flex flex-1 flex-col gap-6 p-4">
                 <Heading
                     title="Dashboard"
-                    description="Live overview powered by a single GraphQL query — counts, nested relations, and five data tables."
+                    description="Live overview powered by a single GraphQL query — counts, charts, nested relations, and five data tables."
                 />
 
                 {error && (
@@ -333,6 +334,11 @@ export default function Dashboard() {
                         ]}
                     />
                 </section>
+
+                <DashboardCharts
+                    analytics={data?.dashboardAnalytics}
+                    loading={loading && !data}
+                />
             </div>
         </>
     );
