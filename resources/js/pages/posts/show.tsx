@@ -22,6 +22,7 @@ export default function ShowPost() {
         GET_POST_BY_SLUG,
         {
             variables: { slug },
+            skip: !slug,
         },
     );
 
