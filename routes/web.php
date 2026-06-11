@@ -2,12 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
-
-Route::inertia('posts', 'posts/index')->name('posts.index');
+Route::inertia('/', 'home')->name('home');
+Route::inertia('blog', 'blog/index')->name('blog.index');
+Route::inertia('blog/{post}', 'blog/show')->name('blog.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::inertia('posts', 'posts/index')->name('posts.index');
     Route::inertia('posts/create', 'posts/create')->name('posts.create');
     Route::inertia('posts/{post}/edit', 'posts/edit')->name('posts.edit');
     Route::inertia('categories', 'categories/index')->name('categories.index');
@@ -22,7 +23,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('users/create', 'users/create')->name('users.create');
     Route::inertia('users/{user}/edit', 'users/edit')->name('users.edit');
 });
-
-Route::inertia('posts/{post}', 'posts/show')->name('posts.show');
 
 require __DIR__.'/settings.php';
