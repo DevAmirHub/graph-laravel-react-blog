@@ -1,0 +1,17 @@
+extend type Mutation {
+    createComment(
+        content: String! @rules(apply: ["required", "string", "min:3"])
+        post_id: ID! @rules(apply: ["required", "exists:posts,id"])
+        parent_id: ID @rules(apply: ["exists:comments,id"])
+    ): Comment! @guard @create @inject(context: "user.id", name: "user_id")
+
+    updateComment(
+        id: ID! @whereKey @rules(apply: ["exists:comments,id"])
+        content: String @rules(apply: ["string", "min:3"])
+        status: String @rules(apply: ["in:pending,approved,rejected"])
+    ): Comment! @guard @update
+
+    deleteComment(
+        id: ID! @whereKey @rules(apply: ["exists:comments,id"])
+    ): Comment @guard @delete
+}
