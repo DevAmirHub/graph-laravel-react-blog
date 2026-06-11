@@ -7,7 +7,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { show as showPost } from '@/routes/posts';
+import { show as showBlogPost } from '@/routes/blog';
 import type { Post } from '@/types/post';
 
 export function PostCard({ post }: { post: Post }) {
@@ -18,8 +18,9 @@ export function PostCard({ post }: { post: Post }) {
                     <div className="space-y-1">
                         <CardTitle>
                             <Link
-                                href={showPost({ post: post.slug })}
+                                href={showBlogPost({ post: post.slug })}
                                 className="hover:underline"
+                                target="_blank"
                             >
                                 {post.title}
                             </Link>
