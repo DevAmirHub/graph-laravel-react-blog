@@ -8,6 +8,29 @@ export const GET_DASHBOARD = gql`
         tagsCount
         commentsCount
 
+        dashboardAnalytics {
+            postsByStatus {
+                status
+                count
+            }
+            commentsByStatus {
+                status
+                count
+            }
+            topCategories {
+                name
+                count
+            }
+            topTags {
+                name
+                count
+            }
+            postsPerMonth {
+                month
+                count
+            }
+        }
+
         users(first: $listLimit, page: 1) {
             data {
                 id

@@ -30,12 +30,36 @@ export type DashboardComment = Comment & {
     post?: { title: string };
 };
 
+export type StatusCount = {
+    status: string;
+    count: number;
+};
+
+export type NamedCount = {
+    name: string;
+    count: number;
+};
+
+export type MonthlyCount = {
+    month: string;
+    count: number;
+};
+
+export type DashboardAnalytics = {
+    postsByStatus: StatusCount[];
+    commentsByStatus: StatusCount[];
+    topCategories: NamedCount[];
+    topTags: NamedCount[];
+    postsPerMonth: MonthlyCount[];
+};
+
 export type DashboardQueryResult = {
     usersCount: number;
     postsCount: number;
     categoriesCount: number;
     tagsCount: number;
     commentsCount: number;
+    dashboardAnalytics: DashboardAnalytics;
     users: {
         data: DashboardUser[];
         paginatorInfo: { total: number };
