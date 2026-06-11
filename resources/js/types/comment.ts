@@ -19,6 +19,7 @@ export type Comment = {
     updated_at?: string;
     author?: CommentAuthor;
     post?: CommentPost;
+    parent?: { id: string } | null;
 };
 
 export type PaginatorInfo = {
