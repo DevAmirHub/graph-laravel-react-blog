@@ -28,5 +28,7 @@ class DatabaseSeeder extends Seeder
             PostSeeder::class,
             CommentSeeder::class,
         ]);
+
+        // For large datasets run: php artisan db:seed-heavy
     }
 }
