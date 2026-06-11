@@ -1,0 +1,8 @@
+type Tag {
+    id: ID!
+    name: String!
+    slug: String!
+    posts: [Post!]! @belongsToMany
+    created_at: DateTime!
+    updated_at: DateTime!
+}

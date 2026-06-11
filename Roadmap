@@ -1,0 +1,454 @@
+Project Roadmap: GraphPress — Laravel + React + GraphQL Blog Platform
+Project Goal
+
+Build a portfolio-ready mini platform using:
+
+Laravel
+React
+Inertia.js
+Lighthouse GraphQL
+REST API
+MySQL
+Sanctum / Laravel Auth
+
+The goal is to show that you understand:
+
+Full-stack development
+GraphQL API design
+REST + GraphQL hybrid architecture
+Authentication
+File uploads
+Eloquent relationships
+Pagination
+Validation
+Role-based access
+Clean project structure
+Phase 1: Project Setup
+Stack
+Backend: Laravel
+Frontend: React + Inertia
+GraphQL: Lighthouse
+Database: MySQL
+Auth: Laravel built-in authentication
+File Upload: REST API
+Install
+laravel new laravel-react-graphql-blog
+
+Choose:
+
+Starter Kit: React
+Authentication: Laravel
+Testing: PHPUnit
+
+Then install Lighthouse:
+
+composer require nuwave/lighthouse
+php artisan vendor:publish --tag=lighthouse-schema
+php artisan vendor:publish --tag=lighthouse-config
+Phase 2: Core Database Models
+
+Create these models:
+
+User ++++++++++++
+Post ++++++++++++
+Comment ++++++++++++
+Category ++++++++++++
+Tag ++++++++++++
+
+Optional later:
+
+Like
+Bookmark
+Media
+Phase 3: Database Structure
+users
+
+Already exists.
+
+id
+name
+email
+password
+email_verified_at
+created_at
+updated_at
+
+posts ++++++++++++
+id
+user_id
+category_id
+title
+slug
+excerpt
+content
+cover_image
+status
+views
+created_at
+updated_at
+
+Status values: ++++++++++++
+
+draft 
+published
+archived
+
+comments ++++++++++++
+id
+user_id
+post_id
+parent_id
+content
+status
+created_at
+updated_at
+
+Status values: ++++++++++++
+ 
+pending
+approved
+rejected
+
+categories ++++++++++++
+id
+name
+slug
+description
+created_at
+updated_at
+
+tags ++++++++++++
+id
+name
+slug
+created_at
+updated_at
+post_tag
+post_id
+tag_id
+
+Phase 4: Eloquent Relationships ++++++++++++
+User
+public function posts()
+{
+    return $this->hasMany(Post::class);
+}
+
+public function comments()
+{
+    return $this->hasMany(Comment::class);
+}
+Post
+public function author()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
+public function category()
+{
+    return $this->belongsTo(Category::class);
+}
+
+public function comments()
+{
+    return $this->hasMany(Comment::class);
+}
+
+public function tags()
+{
+    return $this->belongsToMany(Tag::class);
+}
+Comment
+public function author()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
+public function post()
+{
+    return $this->belongsTo(Post::class);
+}
+
+public function replies()
+{
+    return $this->hasMany(Comment::class, 'parent_id');
+}
+Phase 5: GraphQL Schema
+
+Create types:
+
+graphql  
+├── schema.graphql
+├── types ++++++++++++
+│   ├── user.graphql
+│   ├── post.graphql
+│   ├── comment.graphql
+│   ├── category.graphql
+│   └── tag.graphql
+├── queries
+│   ├── user.graphql
+│   ├── post.graphql
+│   ├── category.graphql
+│   └── tag.graphql
+├── mutations
+│   ├── post.graphql ++++++++++++
+│   ├── comment.graphql
+│   └── tag.graphql
+└── inputs
+    ├── post.graphql
+    ├── comment.graphql
+    └── tag.graphql
+
+type User { ++++++++++++
+    id: ID!
+    name: String!
+    email: String!
+    posts: [Post!]! @hasMany
+    comments: [Comment!]! @hasMany
+}
+
+type Post { ++++++++++++
+    id: ID!
+    title: String!
+    slug: String!
+    excerpt: String
+    content: String!
+    cover_image: String
+    status: String!
+    views: Int!
+    author: User! @belongsTo(relation: "author")
+    category: Category @belongsTo
+    comments: [Comment!]! @hasMany
+    tags: [Tag!]! @belongsToMany
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Comment { ++++++++++++
+    id: ID!
+    content: String!
+    status: String!
+    author: User! @belongsTo(relation: "author")
+    post: Post! @belongsTo
+    replies: [Comment!]! @hasMany
+}
+
+type Category { ++++++++++++
+    id: ID!
+    name: String!
+    slug: String!
+    posts: [Post!]! @hasMany
+}
+
+type Tag { ++++++++++++
+    id: ID!
+    name: String!
+    slug: String!
+    posts: [Post!]! @belongsToMany
+}
+Phase 6: GraphQL Queries
+Basic queries
+type Query {
+    posts(
+        title: String @where(operator: "like")
+        status: String @eq
+    ): [Post!]! @paginate(defaultCount: 10)
+
+    post(id: ID! @eq): Post @find
+
+    postBySlug(slug: String! @eq): Post @find
+
+    categories: [Category!]! @all
+
+    tags: [Tag!]! @all
+
+    me: User @auth
+}
+
+Example:
+
+query {
+  posts(status: "published", first: 10) {
+    data {
+      id
+      title
+      slug
+      author {
+        name
+      }
+      category {
+        name
+      }
+    }
+    paginatorInfo {
+      total
+      currentPage
+      lastPage
+    }
+  }
+}
+Phase 7: GraphQL Mutations
+Create post
+type Mutation {
+    createPost(
+        title: String! @rules(apply: ["required", "string", "min:5", "max:255"])
+        slug: String! @rules(apply: ["required", "string", "unique:posts,slug"])
+        excerpt: String
+        content: String! @rules(apply: ["required", "string", "min:20"])
+        cover_image: String
+        status: String! @rules(apply: ["required", "in:draft,published"])
+        category_id: ID
+    ): Post! @create
+}
+Update post
+extend type Mutation {
+    updatePost(
+        id: ID! @whereKey
+        title: String
+        slug: String
+        excerpt: String
+        content: String
+        cover_image: String
+        status: String @rules(apply: ["in:draft,published,archived"])
+        category_id: ID
+    ): Post! @update
+}
+Delete post
+extend type Mutation {
+    deletePost(
+        id: ID! @whereKey
+    ): Post @delete
+}
+Phase 8: REST File Upload 
+
+Use REST for uploads.
+
+POST /api/upload/post-cover
+POST /api/upload/avatar
+
+Example response:
+
+{
+  "url": "/storage/posts/cover.jpg",
+  "path": "posts/cover.jpg"
+}
+
+Then save the returned path inside GraphQL:
+
+mutation {
+  createPost(
+    title: "GraphQL in Laravel"
+    slug: "graphql-in-laravel"
+    content: "Long content..."
+    cover_image: "posts/cover.jpg"
+    status: "published"
+  ) {
+    id
+    title
+    cover_image
+  }
+}
+Phase 9: React Pages
+
+Create these pages:
+
+Home
+Posts List
+Single Post
+Login
+Register
+Dashboard
+Create Post
+Edit Post
+Categories
+Profile
+Frontend stack
+npm install @apollo/client graphql
+
+Use Apollo Client for GraphQL requests.
+
+Use normal REST request for file uploads.
+
+Phase 10: Dashboard Features
+
+Dashboard should include:
+
+Total posts
+Published posts
+Draft posts
+Total comments
+Recent posts
+Recent comments
+
+GraphQL example:
+
+query {
+  me {
+    name
+    posts {
+      id
+      title
+      status
+    }
+  }
+}
+Phase 11: Access Control
+
+Add roles:
+
+admin
+author
+user
+
+Rules:
+
+Admin can manage everything.
+Author can manage own posts.
+User can comment.
+Guest can only read published posts.
+
+Later install:
+
+composer require spatie/laravel-permission
+Phase 12: Portfolio Features
+
+Add these to make the project strong:
+
+Search posts
+Filter by category
+Filter by tag
+Pagination
+Post status
+Comment approval
+Nested comments
+REST upload
+GraphQL relationships
+Authentication
+Role-based permission
+README documentation
+Final Project Name
+GraphPress
+GitHub repository name
+laravel-react-graphql-blog
+Portfolio title
+GraphPress — Laravel, React and GraphQL Blog Platform
+Short description
+A hybrid REST and GraphQL blog platform built with Laravel, React, Inertia.js and Lighthouse GraphQL. The project demonstrates authentication, Eloquent relationships, pagination, file uploads, validation and role-based access control.
+Development Order
+1. Finish Laravel + React setup
+2. Install Lighthouse
+3. Create Post, Comment, Category, Tag models
+4. Add migrations
+5. Add relationships
+6. Build GraphQL schema
+7. Test queries
+8. Add mutations
+9. Add REST file upload
+10. Connect React with Apollo Client
+11. Build dashboard UI
+12. Add roles and permissions
+13. Write README
+14. Push to GitHub
+15. Add to portfolio
+
+This is a strong mini-project, not just a CRUD app.

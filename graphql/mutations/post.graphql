@@ -1,0 +1,20 @@
+extend type Mutation {
+    createPost(
+        title: String! @rules(apply: ["required", "string", "min:5", "max:255"])
+        slug: String! @rules(apply: ["required", "string", "unique:posts,slug"])
+        content: String! @rules(apply: ["required", "string", "min:20"])
+        status: String! @rules(apply: ["required", "in:draft,published"])
+        category_id: ID
+    ): Post! @create
+
+    updatePost(
+        id: ID! @whereKey
+        title: String
+        slug: String
+        content: String
+        status: String @rules(apply: ["in:draft,published,archived"])
+        category_id: ID
+    ): Post! @update
+
+    deletePost(id: ID! @whereKey): Post @delete
+}

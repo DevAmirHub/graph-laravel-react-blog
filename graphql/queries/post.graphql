@@ -1,0 +1,13 @@
+extend type Query {
+    "List posts with optional filters."
+    posts(
+        title: String @where(operator: "like")
+        status: String @eq
+    ): [Post!]! @paginate(defaultCount: 10)
+
+    "Find a single post by ID."
+    post(id: ID! @eq): Post @find
+
+    "Find a single post by slug."
+    postBySlug(slug: String! @eq): Post @find
+}

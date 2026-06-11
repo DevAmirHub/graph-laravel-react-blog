@@ -1,0 +1,7 @@
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    posts: [Post!]! @hasMany
+    comments: [Comment!]! @hasMany
+}

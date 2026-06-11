@@ -1,0 +1,10 @@
+extend type Query {
+    "List comments with optional filters."
+    comments(
+        post_id: ID @eq
+        status: String @eq
+    ): [Comment!]! @paginate(defaultCount: 10)
+
+    "Find a single comment by ID."
+    comment(id: ID! @eq): Comment @find
+}

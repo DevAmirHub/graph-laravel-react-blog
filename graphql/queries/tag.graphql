@@ -1,0 +1,10 @@
+extend type Query {
+    "List all tags."
+    tags: [Tag!]! @all
+
+    "Find a single tag by ID."
+    tag(id: ID! @eq): Tag @find
+
+    "Find a single tag by slug."
+    tagBySlug(slug: String! @eq): Tag @find
+}

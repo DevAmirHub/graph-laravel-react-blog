@@ -1,0 +1,10 @@
+extend type Query {
+    "List all categories."
+    categories: [Category!]! @all
+
+    "Find a single category by ID."
+    category(id: ID! @eq): Category @find
+
+    "Find a single category by slug."
+    categoryBySlug(slug: String! @eq): Category @find
+}
