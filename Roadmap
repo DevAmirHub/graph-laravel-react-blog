@@ -1,501 +1,244 @@
-Project Roadmap: GraphPress — Laravel + React + GraphQL Blog Platform
-Project Goal
+# GraphPress — Project Roadmap
 
-Build a portfolio-ready mini platform using:
+Laravel + React + GraphQL blog platform.  
+Repo: https://github.com/DevAmirHub/graph-laravel-react-blog
 
-Laravel
-React
-Inertia.js
-Lighthouse GraphQL
-REST API
-MySQL
-Sanctum / Laravel Auth
+This is a portfolio project: public blog on the front, admin panel behind auth, GraphQL for most data, REST for file uploads.
 
-The goal is to show that you understand:
+---
 
-Full-stack development
-GraphQL API design
-REST + GraphQL hybrid architecture
-Authentication
-File uploads
-Eloquent relationships
-Pagination
-Validation
-Role-based access
-Clean project structure
-Phase 1: Project Setup
-Stack
-Backend: Laravel
-Frontend: React + Inertia
-GraphQL: Lighthouse
-Database: MySQL
-Auth: Laravel built-in authentication
-File Upload: REST API
-Install
-laravel new laravel-react-graphql-blog
+## Where things stand
 
-Choose:
+| Phase | Topic | Status |
+|-------|--------|--------|
+| 1 | Project setup | done |
+| 2 | Core models | done |
+| 3 | Database & migrations | done |
+| 4 | Eloquent relationships | done |
+| 5 | GraphQL schema | done |
+| 6 | GraphQL queries | done |
+| 7 | GraphQL mutations | done |
+| 8 | REST file upload | done |
+| 9 | React / Inertia pages | done |
+| 10 | Dashboard & analytics | done |
+| 11 | Public site (home + blog) | done |
+| 12 | Heavy database seeding | done |
+| 13 | Role-based access control | planned |
+| 14 | Public comment submission | planned |
+| 15 | Category / tag filters on blog | planned |
+| 16 | REST vs GraphQL benchmark | planned |
+| 17 | README & portfolio | done |
 
-Starter Kit: React
-Authentication: Laravel
-Testing: PHPUnit
+---
 
-Then install Lighthouse:
+## Phase 1: Project setup
 
-composer require nuwave/lighthouse
-php artisan vendor:publish --tag=lighthouse-schema
-php artisan vendor:publish --tag=lighthouse-config
-Phase 2: Core Database Models
+**Stack**
 
-Create these models:
+- Laravel 13, PHP 8.3+
+- React 19, TypeScript, Inertia v3
+- Lighthouse 6, Apollo Client 4
+- Tailwind 4, Radix UI
+- Laravel Fortify (2FA, passkeys)
+- Vite, Wayfinder, ESLint, Prettier, PHPUnit, PHPStan
 
-User ++++++++++++
-Post ++++++++++++
-Comment ++++++++++++
-Category ++++++++++++
-Tag ++++++++++++
+**Key packages**
 
-Optional later:
+- `nuwave/lighthouse`, `mll-lab/laravel-graphiql`
+- `@apollo/client`, `chart.js`, `react-chartjs-2`
 
-Like
-Bookmark
-Media
-Phase 3: Database Structure
-users
+---
 
-Already exists.
+## Phase 2–4: Domain layer
 
-id
-name
-email
-password
-email_verified_at
-created_at
-updated_at
+Models: User, Post, Comment, Category, Tag, plus `post_tag` pivot.
 
-posts ++++++++++++
-id
-user_id
-category_id
-title
-slug
-excerpt
-content
-cover_image
-status
-views
-created_at
-updated_at
+Post status: `draft`, `published`, `archived`  
+Comment status: `pending`, `approved`, `rejected`
 
-Status values: ++++++++++++
+Relationships (author, category, tags, comments, replies) are set up on the Eloquent models.
 
-draft 
-published
-archived
+---
 
-comments ++++++++++++
-id
-user_id
-post_id
-parent_id
-content
-status
-created_at
-updated_at
+## Phase 5–7: GraphQL API
 
-Status values: ++++++++++++
- 
-pending
-approved
-rejected
-
-categories ++++++++++++
-id
-name
-slug
-description
-created_at
-updated_at
-
-tags ++++++++++++
-id
-name
-slug
-created_at
-updated_at
-post_tag
-post_id
-tag_id
-
-Phase 4: Eloquent Relationships ++++++++++++
-User
-public function posts()
-{
-    return $this->hasMany(Post::class);
-}
-
-public function comments()
-{
-    return $this->hasMany(Comment::class);
-}
-Post
-public function author()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
-
-public function category()
-{
-    return $this->belongsTo(Category::class);
-}
-
-public function comments()
-{
-    return $this->hasMany(Comment::class);
-}
-
-public function tags()
-{
-    return $this->belongsToMany(Tag::class);
-}
-Comment
-public function author()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
-
-public function post()
-{
-    return $this->belongsTo(Post::class);
-}
-
-public function replies()
-{
-    return $this->hasMany(Comment::class, 'parent_id');
-}
-Phase 5: GraphQL Schema
-
-Create types:
-
-graphql  
+```
+graphql/
 ├── schema.graphql
-├── types ++++++++++++
-│   ├── user.graphql
-│   ├── post.graphql
-│   ├── comment.graphql
-│   ├── category.graphql
-│   └── tag.graphql
-├── queries
-│   ├── user.graphql
-│   ├── post.graphql
-│   ├── category.graphql
-│   └── tag.graphql
-├── mutations
-│   ├── post.graphql ++++++++++++
-│   ├── comment.graphql
-│   └── tag.graphql
-└── inputs
-    ├── post.graphql
-    ├── comment.graphql
-    └── tag.graphql
+├── types/       user, post, comment, category, tag, dashboard
+├── queries/     user, post, comment, category, tag, dashboard
+├── mutations/   user, post, comment, category, tag
+└── inputs/      post
+```
 
-type User { ++++++++++++
-    id: ID!
-    name: String!
-    email: String!
-    posts: [Post!]! @hasMany
-    comments: [Comment!]! @hasMany
-}
+Queries cover paginated posts (title/status filters), single post by id or slug, categories, tags, comments, users, and dashboard stats.
 
-type Post { ++++++++++++
-    id: ID!
-    title: String!
-    slug: String!
-    excerpt: String
-    content: String!
-    cover_image: String
-    status: String!
-    views: Int!
-    author: User! @belongsTo(relation: "author")
-    category: Category @belongsTo
-    comments: [Comment!]! @hasMany
-    tags: [Tag!]! @belongsToMany
-    created_at: DateTime!
-    updated_at: DateTime!
-}
+Mutations: CRUD for posts, categories, tags, comments, users. Sensitive ones use `@guard`.
 
-type Comment { ++++++++++++
-    id: ID!
-    content: String!
-    status: String!
-    author: User! @belongsTo(relation: "author")
-    post: Post! @belongsTo
-    replies: [Comment!]! @hasMany
-}
+Custom validators handle unique slug/email on update for Post, Category, Tag, and User.
 
-type Category { ++++++++++++
-    id: ID!
-    name: String!
-    slug: String!
-    posts: [Post!]! @hasMany
-}
+---
 
-type Tag { ++++++++++++
-    id: ID!
-    name: String!
-    slug: String!
-    posts: [Post!]! @belongsToMany
-}
-Phase 6: GraphQL Queries
-Basic queries
-type Query {
-    posts(
-        title: String @where(operator: "like")
-        status: String @eq
-    ): [Post!]! @paginate(defaultCount: 10)
+## Phase 8: REST file upload
 
-    post(id: ID! @eq): Post @find
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/upload/post-cover` | Post cover image |
+| POST | `/api/upload/avatar` | User avatar |
 
-    postBySlug(slug: String! @eq): Post @find
+Returns a storage path; the path goes into GraphQL mutations when creating/updating records.
 
-    categories: [Category!]! @all
+---
 
-    tags: [Tag!]! @all
+## Phase 9: React pages
 
-    me: User @auth
-}
+### Public
 
-Example:
+| Route | Page |
+|-------|------|
+| `/` | Home — hero, stack overview, latest published posts |
+| `/blog` | Post list — search, pagination, published only |
+| `/blog/{slug}` | Single post + approved comments |
 
-query {
-  posts(status: "published", first: 10) {
-    data {
-      id
-      title
-      slug
-      author {
-        name
-      }
-      category {
-        name
-      }
-    }
-    paginatorInfo {
-      total
-      currentPage
-      lastPage
-    }
-  }
-}
-Phase 7: GraphQL Mutations ++++++++++++
-Create post
-type Mutation {
-    createPost(
-        title: String! @rules(apply: ["required", "string", "min:5", "max:255"])
-        slug: String! @rules(apply: ["required", "string", "unique:posts,slug"])
-        excerpt: String
-        content: String! @rules(apply: ["required", "string", "min:20"])
-        cover_image: String
-        status: String! @rules(apply: ["required", "in:draft,published"])
-        category_id: ID
-    ): Post! @create
-}
-Update post
-extend type Mutation {
-    updatePost(
-        id: ID! @whereKey
-        title: String
-        slug: String
-        excerpt: String
-        content: String
-        cover_image: String
-        status: String @rules(apply: ["in:draft,published,archived"])
-        category_id: ID
-    ): Post! @update
-}
-Delete post ++++++++++++
-extend type Mutation {
-    deletePost(
-        id: ID! @whereKey
-    ): Post @delete
-}
-Phase 8: REST File Upload  ++++++++++++
+Uses `PublicLayout` (header/footer, no admin sidebar).
 
-Use REST for uploads.
+### Auth
 
-POST /api/upload/post-cover
-POST /api/upload/avatar
+Login, register, password reset, email verification, 2FA, passkeys — via Fortify.
 
-Example response:
+### Admin (auth + verified)
 
-{
-  "url": "/storage/posts/cover.jpg",
-  "path": "posts/cover.jpg"
-}
+| Route | Feature |
+|-------|---------|
+| `/dashboard` | Stats, tables, charts, query timing |
+| `/posts` | CRUD |
+| `/categories` | CRUD |
+| `/tags` | CRUD |
+| `/comments` | Moderation |
+| `/users` | CRUD |
+| `/settings/profile` | Profile |
+| `/settings/security` | Password, 2FA |
 
-Then save the returned path inside GraphQL:
+Frontend layout:
 
-mutation {
-  createPost(
-    title: "GraphQL in Laravel"
-    slug: "graphql-in-laravel"
-    content: "Long content..."
-    cover_image: "posts/cover.jpg"
-    status: "published"
-  ) {
-    id
-    title
-    cover_image
-  }
-}
-Phase 9: React Pages 
-
+```
 resources/js/
-├── pages/                          ← فقط entry point صفحات Inertia
-│   ├── welcome.tsx
-│   ├── dashboard.tsx
-│   ├── posts/
-│   │   ├── index.tsx               # لیست پست‌ها        /posts
-│   │   ├── create.tsx              # ساخت پست           /posts/create
-│   │   ├── edit.tsx                # ویرایش             /posts/{id}/edit
-│   │   └── show.tsx                # تک پست             /posts/{slug}
-│   ├── categories/
-│   │   └── index.tsx               # /categories
-│   └── tags/
-│       └── index.tsx               # /tags
-│
-├── components/                     ← UI قابل استفاده مجدد
-│   ├── posts/
-│   │   ├── post-card.tsx
-│   │   ├── post-form.tsx
-│   │   ├── post-filters.tsx
-│   │   └── post-status-badge.tsx
-│   ├── categories/
-│   │   └── category-select.tsx
-│   └── tags/
-│       └── tag-input.tsx
-│
-├── graphql/                        ← Apollo queries/mutations
-│   ├── posts/
-│   │   ├── queries.ts
-│   │   ├── mutations.ts
-│   │   └── fragments.ts
-│   ├── categories/
-│   │   └── queries.ts
-│   └── comments/
-│       └── mutations.ts
-│
-├── hooks/                          ← logic مشترک React
-│   ├── use-post-form.ts
-│   └── use-cover-upload.ts         # REST upload
-│
+├── pages/          home, blog/, posts/, categories/, tags/, comments/, users/, dashboard
+├── components/     public/, blog/, posts/, categories/, tags/, comments/, users/, dashboard/
+├── graphql/        posts/, blog/, categories/, tags/, comments/, users/, dashboard/
+├── hooks/          use-*-form.ts, use-cover-upload.ts
+├── layouts/        public-layout, app-layout, auth-layout
 └── types/
-    ├── post.ts
-    ├── category.ts
-    └── tag.ts
+```
 
-Create these pages:
+---
 
-Home
-Posts List
-Single Post
-Login
-Register
-Dashboard
-Create Post
-Edit Post
-Categories
-Profile
-Frontend stack
-npm install @apollo/client graphql
+## Phase 10: Dashboard
 
-Use Apollo Client for GraphQL requests.
+- Count cards for users, posts, categories, tags, comments
+- Tables: recent posts/comments, top categories/tags/users
+- Chart.js: posts by status, comments by status, top categories, posts over time
+- `DashboardAnalytics` resolver for chart data
+- Simple GraphQL query timing on the client
 
-Use normal REST request for file uploads.
+---
 
-Phase 10: Dashboard Features
+## Phase 11: Public site
 
-Dashboard should include:
+Public routes are separate from admin (`/blog` vs `/posts`).
 
-Total posts
-Published posts
-Draft posts
-Total comments
-Recent posts
-Recent comments
+Home and blog load data through GraphQL. Guests don't see draft or archived posts on the public show page. Admin post list links to `/blog/{slug}` for preview.
 
-GraphQL example:
+---
 
-query {
-  me {
-    name
-    posts {
-      id
-      title
-      status
-    }
-  }
-}
-Phase 11: Access Control
+## Phase 12: Heavy seeding
 
-Add roles:
-
-admin
-author
-user
-
-Rules:
-
-Admin can manage everything.
-Author can manage own posts.
-User can comment.
-Guest can only read published posts.
-
-Later install:
-
-composer require spatie/laravel-permission
-Phase 12: Portfolio Features
-
-Add these to make the project strong:
-
-Search posts
-Filter by category
-Filter by tag
-Pagination
-Post status
-Comment approval
-Nested comments
-REST upload
-GraphQL relationships
-Authentication
-Role-based permission
-README documentation
-Final Project Name
-GraphPress
-GitHub repository name
-laravel-react-graphql-blog
-Portfolio title
-GraphPress — Laravel, React and GraphQL Blog Platform
-Short description
-A hybrid REST and GraphQL blog platform built with Laravel, React, Inertia.js and Lighthouse GraphQL. The project demonstrates authentication, Eloquent relationships, pagination, file uploads, validation and role-based access control.
-Development Order
-1. Finish Laravel + React setup
-2. Install Lighthouse
-3. Create Post, Comment, Category, Tag models
-4. Add migrations
-5. Add relationships
-6. Build GraphQL schema
-7. Test queries
-8. Add mutations
-9. Add REST file upload
-10. Connect React with Apollo Client
-11. Build dashboard UI
-12. Add roles and permissions
-13. Write README
-14. Push to GitHub
-15. Add to portfolio
-
-This is a strong mini-project, not just a CRUD app.
-
-php artisan migrate:fresh --seed
+```bash
 php artisan db:seed-heavy --no-interaction
+```
+
+Options in `config/heavy-seed.php` or via CLI (`--users`, `--posts`, `--comments`, `--chunk`).
+
+Defaults: 3,000 users, 5,000 posts, 15,000 comments. Inserts run in chunks so it stays fast on a local DB.
+
+---
+
+## Phase 13: Access control (planned)
+
+Roles to add: admin, author, user.
+
+| Role | Permissions |
+|------|-------------|
+| Admin | Full access |
+| Author | Own posts |
+| User | Comment |
+| Guest | Read published posts |
+
+Plan is to use `spatie/laravel-permission` — not installed yet.
+
+---
+
+## What's left
+
+- Public comment form (logged-in users, pending until approved)
+- Filter blog by category or tag
+- Threaded replies on the public post page
+- REST endpoint to compare dashboard load times with GraphQL
+- Maybe later: Like, Bookmark, Media models
+
+---
+
+## Quick start
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan db:seed-heavy --no-interaction   # optional
+npm install
+npm run dev
+php artisan serve
+```
+
+Demo login: `test@example.com` / `password`
+
+- App: http://localhost:8000
+- GraphQL: http://localhost:8000/graphql
+- GraphiQL: http://localhost:8000/graphiql
+
+---
+
+## Build order
+
+**Finished**
+
+1. Laravel + React + Inertia
+2. Lighthouse
+3. Models, migrations, relationships
+4. GraphQL schema, queries, mutations
+5. REST upload + Apollo Client
+6. Admin CRUD
+7. Dashboard + charts
+8. Public home + blog
+9. Heavy seed command
+10. README
+
+**Still to do**
+
+11. Roles & permissions  
+12. Public comments + category/tag filters  
+13. Deploy a live demo for the portfolio  
+
+---
+
+## Project info
+
+| | |
+|---|---|
+| Name | GraphPress |
+| Repo | [graph-laravel-react-blog](https://github.com/DevAmirHub/graph-laravel-react-blog) |
+| Author | [DevAmirHub](https://github.com/DevAmirHub) — [devamir.com](https://devamir.com) |
+| License | MIT |
+
+Short description for the portfolio: full-stack blog with Laravel, React, Inertia, and Lighthouse — auth, relationships, pagination, uploads, validation, and an admin dashboard with analytics.
