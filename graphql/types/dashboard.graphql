@@ -1,0 +1,22 @@
+type StatusCount {
+    status: String!
+    count: Int!
+}
+
+type NamedCount {
+    name: String!
+    count: Int!
+}
+
+type MonthlyCount {
+    month: String!
+    count: Int!
+}
+
+type DashboardAnalytics {
+    postsByStatus: [StatusCount!]!
+    commentsByStatus: [StatusCount!]!
+    topCategories: [NamedCount!]!
+    topTags: [NamedCount!]!
+    postsPerMonth: [MonthlyCount!]!
+}

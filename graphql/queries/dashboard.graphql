@@ -13,4 +13,9 @@ extend type Query {
 
     "Total comments."
     commentsCount: Int! @count(model: "Comment") @guard
+
+    "Aggregated chart data for the dashboard."
+    dashboardAnalytics: DashboardAnalytics!
+        @guard
+        @field(resolver: "App\\GraphQL\\Queries\\DashboardAnalytics")
 }
