@@ -11,6 +11,8 @@ A portfolio-ready full-stack blog with a **public-facing site**, **admin panel**
 
 **Repository:** [github.com/DevAmirHub/graph-laravel-react-blog](https://github.com/DevAmirHub/graph-laravel-react-blog)
 
+![GraphPress home page](docs/screenshots/home.png)
+
 ---
 
 ## Features
@@ -59,11 +61,9 @@ A portfolio-ready full-stack blog with a **public-facing site**, **admin panel**
 
 ## Screenshots
 
-> Add screenshots of the home page, blog, and dashboard here before publishing to portfolio.
+**Admin dashboard** — stats, tables, and charts from a single GraphQL query.
 
-| Home | Blog | Dashboard |
-|------|------|-----------|
-| _screenshot_ | _screenshot_ | _screenshot_ |
+![Admin dashboard](docs/screenshots/dashboard.png)
 
 ---
 
