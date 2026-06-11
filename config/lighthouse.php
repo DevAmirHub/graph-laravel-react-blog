@@ -28,8 +28,11 @@ return [
          * Make sure to return spec-compliant responses in case an error is thrown.
          */
         'middleware' => [
-            // Ensures the request is not vulnerable to cross-site request forgery.
-            // Nuwave\Lighthouse\Http\Middleware\EnsureXHR::class,
+            // Session + CSRF so @guard mutations work with Fortify web auth.
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
 
             // Always set the `Accept: application/json` header.
             Nuwave\Lighthouse\Http\Middleware\AcceptJson::class,
