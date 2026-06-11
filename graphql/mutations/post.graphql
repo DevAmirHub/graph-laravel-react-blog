@@ -7,7 +7,7 @@ extend type Mutation {
         cover_image: String
         status: String! @rules(apply: ["required", "in:draft,published,archived"])
         category_id: ID! @rules(apply: ["required", "exists:categories,id"])
-        tags: PostTagsRelation @create
+        tags: PostTagsRelation
     ): Post! @guard @create @inject(context: "user.id", name: "user_id")
 
     updatePost(
@@ -19,7 +19,7 @@ extend type Mutation {
         cover_image: String
         status: String @rules(apply: ["in:draft,published,archived"])
         category_id: ID @rules(apply: ["exists:categories,id"])
-        tags: PostTagsRelation @update
+        tags: PostTagsRelation
     ): Post! @guard @update
 
     deletePost(
