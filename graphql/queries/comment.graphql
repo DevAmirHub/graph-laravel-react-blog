@@ -3,7 +3,7 @@ extend type Query {
     comments(
         post_id: ID @eq
         status: String @eq
-    ): [Comment!]! @paginate(defaultCount: 10)
+    ): [Comment!]! @paginate(defaultCount: 10) @orderBy(column: "created_at", direction: DESC)
 
     "Find a single comment by ID."
     comment(id: ID! @eq): Comment @find
