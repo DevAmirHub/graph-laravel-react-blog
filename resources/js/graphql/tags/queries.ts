@@ -11,3 +11,15 @@ export const GET_TAGS = gql`
         }
     }
 `;
+
+export const GET_TAG_BY_ID = gql`
+    query GetTagById($id: ID!) {
+        tag(id: $id) {
+            id
+            name
+            slug
+            created_at
+            updated_at
+        }
+    }
+`;
