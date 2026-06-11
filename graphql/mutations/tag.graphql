@@ -1,0 +1,16 @@
+extend type Mutation {
+    createTag(
+        name: String! @rules(apply: ["required", "string", "min:2", "max:255"])
+        slug: String! @rules(apply: ["required", "string", "unique:tags,slug"])
+    ): Tag! @guard @create
+
+    updateTag(
+        id: ID! @whereKey @rules(apply: ["exists:tags,id"])
+        name: String @rules(apply: ["string", "min:2", "max:255"])
+        slug: String @rules(apply: ["unique:tags,slug,{id}"])
+    ): Tag! @guard @update
+
+    deleteTag(
+        id: ID! @whereKey @rules(apply: ["exists:tags,id"])
+    ): Tag @guard @delete
+}
