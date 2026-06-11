@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FileText, FolderGit2, FolderOpen, LayoutGrid, Tags } from 'lucide-react';
+import { BookOpen, FileText, FolderGit2, FolderOpen, LayoutGrid, MessageSquare, Tags } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as categoriesIndex } from '@/routes/categories';
+import { index as commentsIndex } from '@/routes/comments';
 import { index as postsIndex } from '@/routes/posts';
 import { index as tagsIndex } from '@/routes/tags';
 import type { NavItem } from '@/types';
@@ -39,6 +40,11 @@ const mainNavItems: NavItem[] = [
         title: 'Tags',
         href: tagsIndex(),
         icon: Tags,
+    },
+    {
+        title: 'Comments',
+        href: commentsIndex(),
+        icon: MessageSquare,
     },
 ];
 
