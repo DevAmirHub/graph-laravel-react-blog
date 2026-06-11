@@ -8,9 +8,9 @@ extend type Mutation {
     updateCategory(
         id: ID! @whereKey @rules(apply: ["exists:categories,id"])
         name: String @rules(apply: ["string", "min:2", "max:255"])
-        slug: String @rules(apply: ["unique:categories,slug,{id}"])
+        slug: String
         description: String
-    ): Category! @guard @update
+    ): Category! @guard @update @validator
 
     deleteCategory(
         id: ID! @whereKey @rules(apply: ["exists:categories,id"])

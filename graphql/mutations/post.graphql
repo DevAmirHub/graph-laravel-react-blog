@@ -13,14 +13,14 @@ extend type Mutation {
     updatePost(
         id: ID! @whereKey @rules(apply: ["exists:posts,id"])
         title: String @rules(apply: ["string", "min:5", "max:255"])
-        slug: String @rules(apply: ["unique:posts,slug,{id}"])
+        slug: String
         excerpt: String
         content: String @rules(apply: ["string", "min:20"])
         cover_image: String
         status: String @rules(apply: ["in:draft,published,archived"])
         category_id: ID @rules(apply: ["exists:categories,id"])
         tags: PostTagsRelation
-    ): Post! @guard @update
+    ): Post! @guard @update @validator
 
     deletePost(
         id: ID! @whereKey @rules(apply: ["exists:posts,id"])

@@ -7,8 +7,8 @@ extend type Mutation {
     updateTag(
         id: ID! @whereKey @rules(apply: ["exists:tags,id"])
         name: String @rules(apply: ["string", "min:2", "max:255"])
-        slug: String @rules(apply: ["unique:tags,slug,{id}"])
-    ): Tag! @guard @update
+        slug: String
+    ): Tag! @guard @update @validator
 
     deleteTag(
         id: ID! @whereKey @rules(apply: ["exists:tags,id"])
