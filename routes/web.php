@@ -18,6 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('tags/{tag}/edit', 'tags/edit')->name('tags.edit');
     Route::inertia('comments', 'comments/index')->name('comments.index');
     Route::inertia('comments/{comment}/edit', 'comments/edit')->name('comments.edit');
+    Route::inertia('users', 'users/index')->name('users.index');
+    Route::inertia('users/create', 'users/create')->name('users.create');
+    Route::inertia('users/{user}/edit', 'users/edit')->name('users.edit');
 });
 
 Route::inertia('posts/{post}', 'posts/show')->name('posts.show');
