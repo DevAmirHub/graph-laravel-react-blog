@@ -496,3 +496,6 @@ Development Order
 15. Add to portfolio
 
 This is a strong mini-project, not just a CRUD app.
+
+php artisan migrate:fresh --seed
+php artisan db:seed-heavy --no-interaction
