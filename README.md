@@ -237,7 +237,7 @@ See [Roadmap](./Roadmap) for detailed phase status.
 
 **Amir** — [DevAmirHub](https://github.com/DevAmirHub)
 
-- GitHub: [@DevAmirHub](https://github.com/DevAmirHub)
+- GitHub: [@devamir99](https://github.com/DevAmirHub)
 - Website: [devamir.com](https://devamir.com)
 - Email: [devamir99@gmail.com](mailto:devamir99@gmail.com)
 
