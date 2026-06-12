@@ -108,6 +108,7 @@ Open [http://localhost:8000](http://localhost:8000).
 
 | | |
 |---|---|
+Admin Access Info
 | Email | `test@example.com` |
 | Password | `password` |
 
