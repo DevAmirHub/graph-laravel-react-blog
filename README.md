@@ -235,7 +235,7 @@ See [Roadmap](./Roadmap) for detailed phase status.
 
 ## Author
 
-**Amir** — [DevAmirHub](https://github.com/DevAmirHub)
+**AmirFallahi** — [devamir99](https://github.com/DevAmirHub)
 
 - GitHub: [@devamir99](https://github.com/DevAmirHub)
 - Website: [devamir.com](https://devamir.com)
