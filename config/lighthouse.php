@@ -28,6 +28,8 @@ return [
          * Make sure to return spec-compliant responses in case an error is thrown.
          */
         'middleware' => [
+            \App\Http\Middleware\RedirectBareGraphQLGet::class,
+
             // Session + CSRF so @guard mutations work with Fortify web auth.
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
