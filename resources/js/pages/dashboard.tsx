@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { PostStatusBadge } from '@/components/posts/post-status-badge';
 import { CommentStatusBadge } from '@/components/comments/comment-status-badge';
 import { GET_DASHBOARD } from '@/graphql/dashboard/queries';
+import { getGraphQLErrorMessage } from '@/lib/graphql-errors';
 import { dashboard } from '@/routes';
 import type {
     DashboardCategory,
@@ -89,7 +90,9 @@ export default function Dashboard() {
                 />
 
                 {error && (
-                    <p className="text-sm text-destructive">{error.message}</p>
+                    <p className="text-sm text-destructive">
+                        {getGraphQLErrorMessage(error)}
+                    </p>
                 )}
 
                 <QueryPerformanceBar
